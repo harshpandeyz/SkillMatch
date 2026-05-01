@@ -1,0 +1,2 @@
+-- Seed data is included in database/mysql.sql so jury setup is one command:
+-- mysql -u root -p < database/mysql.sql
