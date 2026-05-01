@@ -1,0 +1,22 @@
+<%- include('../partials/header', { title: skill.name }) %>
+<%- include('../partials/navbar') %>
+
+<main class="container narrow">
+  <article class="card detail-card">
+    <div class="card-top">
+      <p class="eyebrow"><%= skill.category_name %></p>
+      <span class="badge badge-<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+    </div>
+    <h1><%= skill.name %></h1>
+    <p><%= skill.description %></p>
+    <div class="course-meta">
+      <span><%= skill.difficulty === 'Advanced' ? 'Advanced track' : skill.difficulty === 'Intermediate' ? 'Core track' : 'Foundation track' %></span>
+      <span><%= skill.category_name %></span>
+    </div>
+    <% if (skill.resource_url) { %>
+      <a class="primary-action" href="<%= skill.resource_url %>" target="_blank" rel="noreferrer">Open resource</a>
+    <% } %>
+  </article>
+</main>
+
+<%- include('../partials/footer') %>
