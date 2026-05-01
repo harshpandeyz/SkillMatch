@@ -1,0 +1,74 @@
+<%- include('partials/header', { title: 'Skill Recommendation System' }) %>
+<%- include('partials/navbar') %>
+
+<main class="hero product-hero">
+  <section class="hero-copy">
+    <p class="eyebrow">Career Intelligence Platform</p>
+    <h1>Build a focused learning plan for your next technical role.</h1>
+    <p>
+      SkillMatch evaluates your current skills, target role, and proficiency levels to
+      recommend the highest-impact courses for your next step.
+    </p>
+    <div class="hero-actions">
+      <a class="primary-action" href="/auth/register">Create profile</a>
+      <a class="secondary-action" href="/auth/login">Sign in</a>
+    </div>
+    <div class="hero-stats" aria-label="Project capabilities">
+      <div><strong>38</strong><span>Curated courses</span></div>
+      <div><strong>13</strong><span>Skill domains</span></div>
+      <div><strong>8</strong><span>Ranked suggestions</span></div>
+    </div>
+  </section>
+
+  <section class="hero-visual product-preview" aria-label="Recommendation preview">
+    <div class="preview-header">
+      <div>
+        <span>Readiness overview</span>
+        <strong>Backend Developer</strong>
+      </div>
+      <span class="status-pill">Live</span>
+    </div>
+    <div class="preview-grid">
+      <article>
+        <span>Known skills</span>
+        <strong>12</strong>
+      </article>
+      <article>
+        <span>Role match</span>
+        <strong>74%</strong>
+      </article>
+    </div>
+    <div class="insight-panel">
+      <div class="insight-row">
+        <span class="insight-dot"></span>
+        <div>
+          <small>Recommended next</small>
+          <strong>Express.js</strong>
+        </div>
+        <span class="score">92</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="width: 92%"></div>
+      </div>
+    </div>
+    <div class="recommend-stack">
+      <article>
+        <small>High-impact course</small>
+        <strong>Express.js</strong>
+        <span>Builds on JavaScript and backend goals</span>
+      </article>
+      <article>
+        <small>Security gap</small>
+        <strong>Authentication Security</strong>
+        <span>Improves production readiness</span>
+      </article>
+      <article>
+        <small>Operational skill</small>
+        <strong>Docker Fundamentals</strong>
+        <span>Supports deployment workflow</span>
+      </article>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>
