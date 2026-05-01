@@ -1,0 +1,40 @@
+{
+  "name": "skill-recommendation-system",
+  "version": "1.0.0",
+  "description": "Full stack Node.js, Express, EJS and MySQL skill recommendation system for FSBD jury evaluation.",
+  "main": "app.js",
+  "scripts": {
+    "check": "node -c app.js && node -c backend/routes/apiRoutes.js && node -c backend/controllers/authController.js && node -c frontend/public/js/main.js",
+    "test": "node --test tests/*.test.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "start:prod": "set NODE_ENV=production&& node app.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "ejs",
+    "mysql",
+    "recommendation-system"
+  ],
+  "author": "Harsh",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "dotenv": "^17.4.1",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^8.4.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
+    "method-override": "^3.0.0",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
