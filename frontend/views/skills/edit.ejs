@@ -1,0 +1,43 @@
+<%- include('../partials/header', { title: 'Edit Skill' }) %>
+<%- include('../partials/navbar') %>
+
+<main class="container narrow">
+  <section class="panel">
+    <h1>Edit Skill</h1>
+
+    <% if (errors && errors.length) { %>
+      <div class="alert">
+        <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/skills/<%= skill.id %>?_method=PUT" class="form-stack">
+      <label>Name
+        <input name="name" value="<%= skill.name %>" required>
+      </label>
+      <label>Category
+        <select name="categoryId" required>
+          <% categories.forEach(category => { %>
+            <option value="<%= category.id %>" <%= Number(skill.category_id || skill.categoryId) === category.id ? 'selected' : '' %>><%= category.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Difficulty
+        <select name="difficulty" required>
+          <% ['Beginner', 'Intermediate', 'Advanced'].forEach(level => { %>
+            <option value="<%= level %>" <%= skill.difficulty === level ? 'selected' : '' %>><%= level %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Resource URL
+        <input name="resourceUrl" value="<%= skill.resource_url || skill.resourceUrl || '' %>">
+      </label>
+      <label>Description
+        <textarea name="description" required><%= skill.description %></textarea>
+      </label>
+      <button type="submit">Update skill</button>
+    </form>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
