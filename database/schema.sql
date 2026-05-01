@@ -1,0 +1,2 @@
+-- Schema is defined in database/mysql.sql
+-- Run: mysql -u root -p < database/mysql.sql
