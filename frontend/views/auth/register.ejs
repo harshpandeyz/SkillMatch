@@ -1,0 +1,36 @@
+<%- include('../partials/header', { title: 'Register' }) %>
+<%- include('../partials/navbar') %>
+
+<main class="auth-shell">
+  <section class="auth-card">
+    <div class="auth-icon">SM</div>
+    <h1>Register</h1>
+    <p class="muted">Create your learner profile to personalize recommendations.</p>
+
+    <% if (errors && errors.length) { %>
+      <div class="alert">
+        <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/auth/register" class="form-stack">
+      <label>Name
+        <input name="name" value="<%= old.name || '' %>" required>
+      </label>
+      <label>Email
+        <input name="email" type="email" value="<%= old.email || '' %>" required>
+      </label>
+      <label>Target role
+        <input name="targetRole" value="<%= old.targetRole || '' %>" placeholder="Backend Developer, Data Analyst">
+      </label>
+      <label>Password
+        <input name="password" type="password" minlength="6" required>
+      </label>
+      <button type="submit">Register</button>
+    </form>
+
+    <p class="muted">Already registered? <a href="/auth/login">Login</a></p>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
