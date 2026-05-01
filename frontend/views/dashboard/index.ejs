@@ -1,0 +1,153 @@
+<%- include('../partials/header', { title: 'Dashboard' }) %>
+<%- include('../partials/navbar') %>
+
+<%
+  const knownCount = userSkillIds.length;
+  const totalCourses = skills.length;
+  const readiness = Math.min(100, Math.round((knownCount * 6) + (recommendations.length * 3)));
+  const profileStatus = knownCount >= 10 ? 'Advanced profile' : knownCount >= 6 ? 'Strong profile' : knownCount >= 3 ? 'Developing profile' : 'New profile';
+  const progress = totalCourses ? Math.round((knownCount / totalCourses) * 100) : 0;
+%>
+
+<main class="container">
+  <section class="dashboard-head dashboard-hero">
+    <div>
+      <p class="eyebrow">Career Dashboard</p>
+      <h1>Welcome, <%= user.name %></h1>
+      <p class="muted">Target role: <%= user.target_role || 'Not set yet' %></p>
+    </div>
+    <div class="rank-card">
+      <span>Profile status</span>
+      <strong><%= profileStatus %></strong>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="width: <%= Math.min(progress, 100) %>%"></div>
+      </div>
+      <small><%= progress %>% catalogue coverage</small>
+    </div>
+    <a class="primary-action" href="/recommend">View recommendations</a>
+  </section>
+
+  <section class="metrics-grid" aria-label="Dashboard summary">
+    <article class="metric-card">
+      <span>Known skills</span>
+      <strong><%= knownCount %></strong>
+    </article>
+    <article class="metric-card">
+      <span>Readiness index</span>
+      <strong><%= readiness %>%</strong>
+    </article>
+    <article class="metric-card">
+      <span>Recommendations</span>
+      <strong><%= recommendations.length %></strong>
+    </article>
+    <article class="metric-card">
+      <span>Catalogue</span>
+      <strong><%= totalCourses %></strong>
+    </article>
+  </section>
+
+  <section class="workflow-board" aria-label="Profile workflow">
+    <article>
+      <span class="workflow-step">01</span>
+      <strong>Capture current skills</strong>
+      <p>Select skills you already use so recommendations start from real context.</p>
+    </article>
+    <article>
+      <span class="workflow-step">02</span>
+      <strong>Set proficiency</strong>
+      <p>Mark beginner, intermediate, or advanced to prioritize the right next level.</p>
+    </article>
+    <article>
+      <span class="workflow-step">03</span>
+      <strong>Review recommendations</strong>
+      <p>Use the ranked course list as your focused learning plan.</p>
+    </article>
+  </section>
+
+  <section class="grid-two">
+    <div class="panel">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Profile setup</p>
+          <h2>Your profile</h2>
+        </div>
+      </div>
+      <form method="POST" action="/profile" class="form-stack">
+        <label>Name
+          <input name="name" value="<%= user.name %>" required>
+        </label>
+        <label>Target role
+          <input name="targetRole" value="<%= user.target_role || '' %>" placeholder="Backend Developer">
+        </label>
+
+        <div class="checkbox-list">
+          <h3>Known skills</h3>
+          <% skills.forEach(skill => { %>
+            <div class="skill-row">
+              <label class="check-row">
+                <input
+                  type="checkbox"
+                  name="skillIds"
+                  value="<%= skill.id %>"
+                  class="skill-checkbox"
+                  data-skill-id="<%= skill.id %>"
+                  <%= userSkillIds.includes(skill.id) ? 'checked' : '' %>
+                >
+                <span><%= skill.name %> <small><%= skill.category_name %> &mdash; <%= skill.difficulty %></small></span>
+              </label>
+              <select
+                name="proficiency[<%= skill.id %>]"
+                class="proficiency-select"
+                <%= userSkillIds.includes(skill.id) ? '' : 'disabled' %>
+              >
+                <option value="beginner" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'beginner') ? 'selected' : '' %>>Beginner</option>
+                <option value="intermediate" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'intermediate') ? 'selected' : '' %>>Intermediate</option>
+                <option value="advanced" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'advanced') ? 'selected' : '' %>>Advanced</option>
+              </select>
+            </div>
+          <% }) %>
+        </div>
+
+        <button type="submit">Save profile</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Recommended focus</p>
+          <h2>Top next courses</h2>
+        </div>
+      </div>
+      <% if (recommendations.length === 0) { %>
+        <div class="empty-state">
+          <strong>No recommendations yet</strong>
+          <p>Add your known skills to generate a ranked learning path.</p>
+        </div>
+      <% } %>
+
+      <% recommendations.slice(0, 5).forEach(skill => { %>
+        <article class="card compact">
+          <div>
+            <p class="eyebrow"><%= skill.category_name %></p>
+            <h3><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h3>
+            <p><%= skill.reason %></p>
+            <div class="score-bar-wrap">
+              <div class="score-bar" style="width: <%= Math.min(skill.score, 100) %>%"></div>
+            </div>
+          </div>
+          <span class="score"><%= skill.score %></span>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</main>
+
+<script>
+document.querySelectorAll('.skill-checkbox').forEach(cb => {
+  const select = document.querySelector(`select[name="proficiency[${cb.dataset.skillId}]"]`);
+  cb.addEventListener('change', () => { if (select) select.disabled = !cb.checked; });
+});
+</script>
+
+<%- include('../partials/footer') %>
