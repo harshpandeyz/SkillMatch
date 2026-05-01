@@ -1,0 +1,45 @@
+<%- include('../partials/header', { title: 'Recommendations' }) %>
+<%- include('../partials/navbar') %>
+
+<main class="container">
+  <section class="dashboard-head">
+    <div>
+      <p class="eyebrow">Recommendation Engine</p>
+      <h1>Your recommended courses</h1>
+      <p class="muted">Ranked by your selected skills, proficiency, target role, and course difficulty.</p>
+    </div>
+    <a class="secondary-action" href="/dashboard">Update profile</a>
+  </section>
+
+  <section class="cards-grid">
+    <% if (skills.length === 0) { %>
+      <div class="empty-state full">
+        <strong>No recommendations yet</strong>
+        <p>Add known skills on your dashboard to generate a ranked learning path.</p>
+      </div>
+    <% } %>
+
+    <% skills.forEach(skill => { %>
+      <article class="card course-card recommended-card">
+        <div class="card-top">
+          <div>
+            <p class="eyebrow"><%= skill.category_name %></p>
+            <span class="badge badge-<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+          </div>
+          <span class="score"><%= skill.score %></span>
+        </div>
+        <h2><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h2>
+        <p><%= skill.description %></p>
+        <p class="reason"><%= skill.reason %></p>
+        <div class="score-bar-wrap">
+          <div class="score-bar" style="width: <%= Math.min(skill.score, 100) %>%"></div>
+        </div>
+        <% if (skill.resource_url) { %>
+          <a class="course-link" href="<%= skill.resource_url %>" target="_blank" rel="noreferrer">Open resource</a>
+        <% } %>
+      </article>
+    <% }) %>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
