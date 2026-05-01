@@ -1,0 +1,43 @@
+<%- include('../partials/header', { title: 'Login' }) %>
+<%- include('../partials/navbar') %>
+
+<main class="auth-shell">
+  <section class="auth-card">
+    <div class="auth-icon">SM</div>
+    <h1>Sign in</h1>
+    <p class="muted">Access your learning dashboard and continue your personalized path.</p>
+
+    <div class="demo-accounts">
+      <div>
+        <span>Learner demo</span>
+        <strong>harsh@gmail.com</strong>
+        <small>Password: 123456</small>
+      </div>
+      <div>
+        <span>Admin demo</span>
+        <strong>admin@skillmatch.local</strong>
+        <small>Password: admin123</small>
+      </div>
+    </div>
+
+    <% if (errors && errors.length) { %>
+      <div class="alert">
+        <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/auth/login" class="form-stack">
+      <label>Email
+        <input name="email" type="email" value="<%= old.email || '' %>" required>
+      </label>
+      <label>Password
+        <input name="password" type="password" required>
+      </label>
+      <button type="submit">Sign in</button>
+    </form>
+
+    <p class="muted">New learner? <a href="/auth/register">Create an account</a></p>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
