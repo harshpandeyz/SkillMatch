@@ -1,0 +1,12 @@
+<%- include('partials/header', { title: 'Error' }) %>
+<%- include('partials/navbar') %>
+
+<main class="container narrow">
+  <section class="card">
+    <p class="eyebrow">HTTP <%= status %></p>
+    <h1><%= message %></h1>
+    <a class="primary-action" href="<%= currentUser ? '/dashboard' : '/' %>">Go back</a>
+  </section>
+</main>
+
+<%- include('partials/footer') %>
