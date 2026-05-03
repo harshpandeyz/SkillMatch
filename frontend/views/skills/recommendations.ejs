@@ -1,45 +1,48 @@
-<%- include('../partials/header', { title: 'Recommendations' }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
-<main class="container">
-  <section class="dashboard-head">
+<main class="container" style="padding-top:var(--sp-8);padding-bottom:var(--sp-16)">
+  <div class="page-header" style="margin-bottom:var(--sp-8)">
     <div>
-      <p class="eyebrow">Recommendation Engine</p>
-      <h1>Your recommended courses</h1>
-      <p class="muted">Ranked by your selected skills, proficiency, target role, and course difficulty.</p>
+      <span class="section-label">Learning path</span>
+      <h1>Your Recommendations</h1>
+      <p class="text-muted">Ranked by category overlap, difficulty, and role alignment.</p>
     </div>
-    <a class="secondary-action" href="/dashboard">Update profile</a>
-  </section>
+    <a href="/dashboard" class="btn btn--outline">Update profile</a>
+  </div>
 
-  <section class="cards-grid">
-    <% if (skills.length === 0) { %>
-      <div class="empty-state full">
-        <strong>No recommendations yet</strong>
-        <p>Add known skills on your dashboard to generate a ranked learning path.</p>
+  <% if (!skills || skills.length === 0) { %>
+    <div class="empty-state card" style="margin:0 auto;max-width:500px">
+      <div class="empty-state__icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12h24"/><path d="M12 22h16"/><path d="M12 32h10"/><path d="m31 30 5 5 8-10"/></svg>
       </div>
-    <% } %>
-
-    <% skills.forEach(skill => { %>
-      <article class="card course-card recommended-card">
-        <div class="card-top">
-          <div>
-            <p class="eyebrow"><%= skill.category_name %></p>
-            <span class="badge badge-<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+      <p class="empty-state__title">No recommendations yet</p>
+      <p class="text-muted">Go to your dashboard and add at least one known skill to generate your learning path.</p>
+      <a href="/dashboard" class="btn btn--primary" style="margin-top:var(--sp-5)">Go to Dashboard</a>
+    </div>
+  <% } else { %>
+    <div class="rec-list">
+      <% const medalColors = ['#f59e0b','#9ca3af','#b45309'];
+         skills.forEach((skill, idx) => {
+           const pct = Math.round(Math.min(skill.score / 130, 1) * 100);
+           const medal = idx < 3 ? medalColors[idx] : 'var(--brand-200)';
+      %>
+        <article class="rec-list__item card card--hover">
+          <div class="rec-list__rank" style="color:<%= medal %>">#<%= idx + 1 %></div>
+          <div class="rec-list__body">
+            <div class="rec-list__badges"><span class="badge badge--category"><%= skill.category_name %></span><span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span></div>
+            <h2 class="rec-list__name"><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h2>
+            <p class="text-muted" style="font-size:0.875rem;margin:var(--sp-2) 0"><%= skill.reason %></p>
+            <div class="progress-bar" style="max-width:320px"><div class="progress-bar__fill progress-bar__fill--<%= idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : 'default' %>" style="width:<%= pct %>%"></div></div>
           </div>
-          <span class="score"><%= skill.score %></span>
-        </div>
-        <h2><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h2>
-        <p><%= skill.description %></p>
-        <p class="reason"><%= skill.reason %></p>
-        <div class="score-bar-wrap">
-          <div class="score-bar" style="width: <%= Math.min(skill.score, 100) %>%"></div>
-        </div>
-        <% if (skill.resource_url) { %>
-          <a class="course-link" href="<%= skill.resource_url %>" target="_blank" rel="noreferrer">Open resource</a>
-        <% } %>
-      </article>
-    <% }) %>
-  </section>
+          <div class="rec-list__right">
+            <div class="rec-list__score"><strong><%= skill.score %></strong><span>score</span></div>
+            <% if (skill.resource_url) { %><a href="<%= skill.resource_url %>" target="_blank" rel="noopener" class="btn btn--outline btn--sm">Study</a><% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
 </main>
 
 <%- include('../partials/footer') %>
