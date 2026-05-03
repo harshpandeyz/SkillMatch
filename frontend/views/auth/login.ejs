@@ -1,43 +1,49 @@
-<%- include('../partials/header', { title: 'Login' }) %>
-<%- include('../partials/navbar') %>
+<%- include('../partials/header', { title: 'Sign in' }) %>
 
-<main class="auth-shell">
-  <section class="auth-card">
-    <div class="auth-icon">SM</div>
-    <h1>Sign in</h1>
-    <p class="muted">Access your learning dashboard and continue your personalized path.</p>
+<div class="auth-layout">
+  <div class="auth-panel auth-panel--left">
+    <div class="auth-logo-big">SM</div>
+    <h2>Your personalized learning path starts here</h2>
+    <ul>
+      <li>Profile-based recommendations</li>
+      <li>Role-matched scoring engine</li>
+      <li>Secure, session-backed auth</li>
+    </ul>
+  </div>
+  <div class="auth-panel auth-panel--right">
+    <div class="auth-form-box">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in to your SkillMatch account</p>
 
-    <div class="demo-accounts">
-      <div>
-        <span>Learner demo</span>
-        <strong>harsh@gmail.com</strong>
-        <small>Password: 123456</small>
+      <div class="demo-creds">
+        <strong>Demo accounts</strong>
+        <p>admin@skillmatch.local / admin123</p>
+        <p>harsh@gmail.com / 123456</p>
       </div>
-      <div>
-        <span>Admin demo</span>
-        <strong>admin@skillmatch.local</strong>
-        <small>Password: admin123</small>
-      </div>
+
+      <% if (errors && errors.length) { %>
+        <div class="alert alert--error">
+          <% errors.forEach(e => { %><p><%= e.msg || e %></p><% }) %>
+        </div>
+      <% } %>
+
+      <form method="POST" action="/auth/login" class="form-stack">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input id="email" class="form-control" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Sign in</button>
+      </form>
+
+      <p class="auth-footer">Don't have an account? <a href="/auth/register">Create one</a></p>
     </div>
+  </div>
+</div>
 
-    <% if (errors && errors.length) { %>
-      <div class="alert">
-        <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
-      </div>
-    <% } %>
-
-    <form method="POST" action="/auth/login" class="form-stack">
-      <label>Email
-        <input name="email" type="email" value="<%= old.email || '' %>" required>
-      </label>
-      <label>Password
-        <input name="password" type="password" required>
-      </label>
-      <button type="submit">Sign in</button>
-    </form>
-
-    <p class="muted">New learner? <a href="/auth/register">Create an account</a></p>
-  </section>
-</main>
-
-<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body>
+</html>
