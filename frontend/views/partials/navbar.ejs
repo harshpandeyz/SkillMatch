@@ -1,24 +1,81 @@
-<nav class="topbar">
-  <a class="brand" href="<%= currentUser ? '/dashboard' : '/' %>">
-    <span class="brand-mark">SM</span>
-    <span>SkillMatch</span>
-  </a>
-  <div class="nav-links">
-    <% if (currentUser) { %>
+<%
+  const navPath = typeof currentPath !== 'undefined' ? currentPath : '';
+  const navUser = typeof currentUser !== 'undefined' ? currentUser : null;
+  const navFlash = typeof flash !== 'undefined' ? flash : null;
+%>
+<header class="navbar" id="navbar">
+  <div class="navbar__inner container">
+    <a class="navbar__brand" href="<%= navUser ? '/dashboard' : '/' %>">
+      <span class="navbar__logo">SM</span>
+      <span class="navbar__name">SkillMatch</span>
+    </a>
+    <nav class="navbar__links" id="navLinks" aria-label="Main navigation">
+      <% if (navUser) { %>
+        <a href="/dashboard" class="navbar__link <%= navPath === '/dashboard' ? 'navbar__link--active' : '' %>">Dashboard</a>
+        <a href="/skills" class="navbar__link <%= navPath.startsWith('/skills') ? 'navbar__link--active' : '' %>">Skills</a>
+        <a href="/recommend" class="navbar__link <%= navPath === '/recommend' ? 'navbar__link--active' : '' %>">Recommendations</a>
+      <% } else { %>
+        <a href="/" class="navbar__link <%= navPath === '/' ? 'navbar__link--active' : '' %>">Home</a>
+        <a href="/auth/login" class="navbar__link <%= navPath === '/auth/login' ? 'navbar__link--active' : '' %>">Sign in</a>
+      <% } %>
+    </nav>
+    <div class="navbar__actions">
+      <% if (navUser) { %>
+        <% if (navUser.role === 'admin') { %><span class="badge badge--admin">Admin</span><% } %>
+        <div class="navbar__user">
+          <span class="navbar__avatar"><%= navUser.name.charAt(0).toUpperCase() %></span>
+          <span class="navbar__username"><%= navUser.name.split(' ')[0] %></span>
+        </div>
+        <a href="/auth/logout" class="btn btn--outline btn--sm">Sign out</a>
+      <% } else { %>
+        <a href="/auth/login" class="btn btn--outline btn--sm">Sign in</a>
+        <a href="/auth/register" class="btn btn--primary btn--sm">Get started</a>
+      <% } %>
+    </div>
+    <button class="navbar__hamburger" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="navbar__mobile" id="navMobile" hidden>
+    <% if (navUser) { %>
       <a href="/dashboard">Dashboard</a>
       <a href="/skills">Skills</a>
       <a href="/recommend">Recommendations</a>
-      <% if (currentUser.role === 'admin') { %>
-        <span class="badge">Admin</span>
-      <% } %>
-      <a class="nav-logout" href="/auth/logout">Logout</a>
+      <a href="/auth/logout">Sign out</a>
     <% } else { %>
-      <a href="/auth/login">Login</a>
-      <a class="button-link" href="/auth/register">Register</a>
+      <a href="/auth/login">Sign in</a>
+      <a href="/auth/register">Get started</a>
     <% } %>
   </div>
-</nav>
+</header>
 
-<% if (flash) { %>
-  <div class="flash flash-<%= flash.type %>"><%= flash.message %></div>
+<% if (navFlash) { %>
+<div class="flash flash--<%= navFlash.type %>" id="flashToast" role="alert" aria-live="polite">
+  <span><%= navFlash.message %></span>
+  <button class="flash__close" onclick="this.parentElement.remove()" aria-label="Dismiss">&#x2715;</button>
+</div>
 <% } %>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const mobile = document.getElementById('navMobile');
+  if (toggle && mobile) {
+    toggle.addEventListener('click', () => {
+      const open = !mobile.hidden;
+      mobile.hidden = open;
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  }
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar')?.classList.toggle('navbar--scrolled', window.scrollY > 8);
+  }, { passive: true });
+  const flash = document.getElementById('flashToast');
+  if (flash) {
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.5s, transform 0.5s';
+      flash.style.opacity = '0';
+      flash.style.transform = 'translateX(110%)';
+      setTimeout(() => flash.remove(), 500);
+    }, 5000);
+  }
+</script>
