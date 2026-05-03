@@ -1,12 +1,14 @@
 <%- include('partials/header', { title: 'Error' }) %>
 <%- include('partials/navbar') %>
 
-<main class="container narrow">
-  <section class="card">
-    <p class="eyebrow">HTTP <%= status %></p>
-    <h1><%= message %></h1>
-    <a class="primary-action" href="<%= currentUser ? '/dashboard' : '/' %>">Go back</a>
-  </section>
+<main class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:var(--sp-4)">
+  <div style="font-size:4rem;font-weight:900;color:var(--gray-200)"><%= status || 500 %></div>
+  <h1 style="font-size:1.5rem;font-weight:800;color:var(--gray-800)"><%= message || 'Something went wrong' %></h1>
+  <p class="text-muted" style="max-width:40ch">Don't worry, your session is intact. Head back to a safe place.</p>
+  <div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-4)">
+    <a href="javascript:history.back()" class="btn btn--outline">Go back</a>
+    <a href="/" class="btn btn--primary">Home</a>
+  </div>
 </main>
 
 <%- include('partials/footer') %>
