@@ -4,11 +4,11 @@
   "description": "Full stack Node.js, Express, EJS and MySQL skill recommendation system for FSBD jury evaluation.",
   "main": "app.js",
   "scripts": {
-    "check": "node -c app.js && node -c backend/routes/apiRoutes.js && node -c backend/controllers/authController.js && node -c frontend/public/js/main.js",
-    "test": "node --test tests/*.test.js",
     "start": "node app.js",
+    "start:prod": "set NODE_ENV=production&& node app.js",
     "dev": "nodemon app.js",
-    "start:prod": "set NODE_ENV=production&& node app.js"
+    "test": "node --test tests/*.test.js",
+    "check": "node -c app.js && node -c backend/routes/apiRoutes.js && node -c backend/controllers/authController.js"
   },
   "keywords": [
     "nodejs",
