@@ -1,12 +1,36 @@
 <footer class="footer">
-  <div>
-    <strong>SkillMatch</strong>
-    <span>Structured skill planning for career-focused learners.</span>
+  <div class="footer__inner container">
+    <div class="footer__brand">
+      <span class="footer__logo">SM</span>
+      <div>
+        <strong class="footer__name">SkillMatch</strong>
+        <p class="footer__tagline">Structured skill planning for career-focused learners.</p>
+      </div>
+    </div>
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <strong>Navigation</strong>
+      <a href="/">Home</a>
+      <a href="/skills">Skill Catalogue</a>
+      <a href="/recommend">Recommendations</a>
+      <a href="/dashboard">Dashboard</a>
+    </nav>
+    <nav class="footer__nav" aria-label="Account navigation">
+      <strong>Account</strong>
+      <a href="/auth/login">Sign in</a>
+      <a href="/auth/register">Register</a>
+      <a href="/auth/logout">Sign out</a>
+    </nav>
+    <div class="footer__tech">
+      <strong>Built with</strong>
+      <span>Node.js - Express - MySQL - EJS</span>
+      <a href="/api/health" target="_blank" rel="noopener">API Health</a>
+    </div>
   </div>
-  <div class="footer-links">
-    <a href="/skills">Skill Catalogue</a>
-    <a href="/recommend">Recommendations</a>
-    <a href="/auth/login">Login</a>
+  <div class="footer__bottom">
+    <div class="container">
+      <span>Copyright 2025 SkillMatch - FSBD Final Jury Project</span>
+      <span>Full Stack Backend Development</span>
+    </div>
   </div>
 </footer>
 <script src="/js/main.js"></script>
