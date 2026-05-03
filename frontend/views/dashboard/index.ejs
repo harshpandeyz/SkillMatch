@@ -1,153 +1,134 @@
-<%- include('../partials/header', { title: 'Dashboard' }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
 <%
   const knownCount = userSkillIds.length;
   const totalCourses = skills.length;
   const readiness = Math.min(100, Math.round((knownCount * 6) + (recommendations.length * 3)));
-  const profileStatus = knownCount >= 10 ? 'Advanced profile' : knownCount >= 6 ? 'Strong profile' : knownCount >= 3 ? 'Developing profile' : 'New profile';
-  const progress = totalCourses ? Math.round((knownCount / totalCourses) * 100) : 0;
+  const profileStatus = knownCount >= 10 ? 'Advanced' : knownCount >= 6 ? 'Strong' : knownCount >= 3 ? 'Developing' : 'New';
+  const RING_R = 40;
+  const RING_C = 2 * Math.PI * RING_R;
+  const ringOffset = RING_C - (readiness / 100) * RING_C;
 %>
 
-<main class="container">
-  <section class="dashboard-head dashboard-hero">
-    <div>
-      <p class="eyebrow">Career Dashboard</p>
-      <h1>Welcome, <%= user.name %></h1>
-      <p class="muted">Target role: <%= user.target_role || 'Not set yet' %></p>
+<main class="container" style="padding-top:var(--sp-8);padding-bottom:var(--sp-16)">
+  <section class="db-hero">
+    <div class="db-hero__text">
+      <p class="section-label">Career Dashboard</p>
+      <h1>Good day, <%= user.name.split(' ')[0] %></h1>
+      <p>Target role: <strong><%= user.target_role || 'Not set yet' %></strong></p>
     </div>
-    <div class="rank-card">
-      <span>Profile status</span>
-      <strong><%= profileStatus %></strong>
-      <div class="score-bar-wrap">
-        <div class="score-bar" style="width: <%= Math.min(progress, 100) %>%"></div>
-      </div>
-      <small><%= progress %>% catalogue coverage</small>
+    <div class="db-hero__ring">
+      <svg viewBox="0 0 100 100" class="readiness-ring" aria-label="Readiness index <%= readiness %>%">
+        <circle cx="50" cy="50" r="<%= RING_R %>" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="<%= RING_R %>" fill="none" stroke="white" stroke-width="8"
+          stroke-dasharray="<%= RING_C.toFixed(1) %>" stroke-dashoffset="<%= ringOffset.toFixed(1) %>"
+          stroke-linecap="round" transform="rotate(-90 50 50)" class="readiness-ring__arc"
+          style="--ring-offset:<%= ringOffset.toFixed(1) %>"/>
+        <text x="50" y="46" text-anchor="middle" font-size="16" font-weight="800" fill="white"><%= readiness %>%</text>
+        <text x="50" y="62" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.7)">readiness</text>
+      </svg>
     </div>
-    <a class="primary-action" href="/recommend">View recommendations</a>
+    <div class="db-hero__status">
+      <span class="badge badge--admin"><%= profileStatus %> profile</span>
+      <a href="/recommend" class="btn btn--ghost-white">View recommendations</a>
+    </div>
   </section>
 
-  <section class="metrics-grid" aria-label="Dashboard summary">
-    <article class="metric-card">
-      <span>Known skills</span>
-      <strong><%= knownCount %></strong>
-    </article>
-    <article class="metric-card">
-      <span>Readiness index</span>
-      <strong><%= readiness %>%</strong>
-    </article>
-    <article class="metric-card">
-      <span>Recommendations</span>
-      <strong><%= recommendations.length %></strong>
-    </article>
-    <article class="metric-card">
-      <span>Catalogue</span>
-      <strong><%= totalCourses %></strong>
-    </article>
+  <section class="stats-grid" aria-label="Dashboard statistics">
+    <article class="stat-card stat-card--blue"><p class="stat-card__label">Known skills</p><strong class="stat-card__value"><%= knownCount %></strong><p class="stat-card__sub">of <%= totalCourses %> total</p></article>
+    <article class="stat-card stat-card--green"><p class="stat-card__label">Readiness index</p><strong class="stat-card__value"><%= readiness %>%</strong><p class="stat-card__sub">career readiness</p></article>
+    <article class="stat-card stat-card--violet"><p class="stat-card__label">Recommendations</p><strong class="stat-card__value"><%= recommendations.length %></strong><p class="stat-card__sub">skills queued up</p></article>
+    <article class="stat-card stat-card--amber"><p class="stat-card__label">Catalogue size</p><strong class="stat-card__value"><%= totalCourses %></strong><p class="stat-card__sub">skills available</p></article>
   </section>
 
-  <section class="workflow-board" aria-label="Profile workflow">
-    <article>
-      <span class="workflow-step">01</span>
-      <strong>Capture current skills</strong>
-      <p>Select skills you already use so recommendations start from real context.</p>
-    </article>
-    <article>
-      <span class="workflow-step">02</span>
-      <strong>Set proficiency</strong>
-      <p>Mark beginner, intermediate, or advanced to prioritize the right next level.</p>
-    </article>
-    <article>
-      <span class="workflow-step">03</span>
-      <strong>Review recommendations</strong>
-      <p>Use the ranked course list as your focused learning plan.</p>
-    </article>
-  </section>
+  <div class="grid-2" style="margin-top:var(--sp-8);align-items:start">
+    <div class="card">
+      <span class="section-label">Profile setup</span>
+      <h2 style="font-size:1.25rem;margin-bottom:var(--sp-6)">Your profile</h2>
 
-  <section class="grid-two">
-    <div class="panel">
-      <div class="section-title">
-        <div>
-          <p class="eyebrow">Profile setup</p>
-          <h2>Your profile</h2>
-        </div>
-      </div>
-      <form method="POST" action="/profile" class="form-stack">
-        <label>Name
-          <input name="name" value="<%= user.name %>" required>
-        </label>
-        <label>Target role
-          <input name="targetRole" value="<%= user.target_role || '' %>" placeholder="Backend Developer">
-        </label>
-
-        <div class="checkbox-list">
-          <h3>Known skills</h3>
-          <% skills.forEach(skill => { %>
-            <div class="skill-row">
-              <label class="check-row">
-                <input
-                  type="checkbox"
-                  name="skillIds"
-                  value="<%= skill.id %>"
-                  class="skill-checkbox"
-                  data-skill-id="<%= skill.id %>"
-                  <%= userSkillIds.includes(skill.id) ? 'checked' : '' %>
-                >
-                <span><%= skill.name %> <small><%= skill.category_name %> &mdash; <%= skill.difficulty %></small></span>
-              </label>
-              <select
-                name="proficiency[<%= skill.id %>]"
-                class="proficiency-select"
-                <%= userSkillIds.includes(skill.id) ? '' : 'disabled' %>
-              >
-                <option value="beginner" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'beginner') ? 'selected' : '' %>>Beginner</option>
-                <option value="intermediate" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'intermediate') ? 'selected' : '' %>>Intermediate</option>
-                <option value="advanced" <%= (userProficiencyMap && userProficiencyMap[skill.id] === 'advanced') ? 'selected' : '' %>>Advanced</option>
-              </select>
-            </div>
-          <% }) %>
-        </div>
-
-        <button type="submit">Save profile</button>
-      </form>
-    </div>
-
-    <div class="panel">
-      <div class="section-title">
-        <div>
-          <p class="eyebrow">Recommended focus</p>
-          <h2>Top next courses</h2>
-        </div>
-      </div>
-      <% if (recommendations.length === 0) { %>
-        <div class="empty-state">
-          <strong>No recommendations yet</strong>
-          <p>Add your known skills to generate a ranked learning path.</p>
+      <% if (errors && errors.length) { %>
+        <div class="alert alert--error" style="margin-bottom:var(--sp-4)">
+          <% errors.forEach(e => { %><p><%= e.msg %></p><% }) %>
         </div>
       <% } %>
 
-      <% recommendations.slice(0, 5).forEach(skill => { %>
-        <article class="card compact">
-          <div>
-            <p class="eyebrow"><%= skill.category_name %></p>
-            <h3><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h3>
-            <p><%= skill.reason %></p>
-            <div class="score-bar-wrap">
-              <div class="score-bar" style="width: <%= Math.min(skill.score, 100) %>%"></div>
-            </div>
-          </div>
-          <span class="score"><%= skill.score %></span>
-        </article>
-      <% }) %>
+      <form method="POST" action="/profile" class="form-stack">
+        <div class="form-group">
+          <label for="nameInput">Full name</label>
+          <input id="nameInput" class="form-control" name="name" value="<%= user.name %>" required>
+        </div>
+        <div class="form-group">
+          <label for="roleInput">Target role <span class="text-muted">(optional)</span></label>
+          <input id="roleInput" class="form-control" name="targetRole" value="<%= user.target_role || '' %>" placeholder="e.g. Backend Developer">
+        </div>
+        <div class="skills-accordion">
+          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:var(--sp-4)">Known skills</h3>
+          <%
+            const grouped = {};
+            skills.forEach(s => {
+              if (!grouped[s.category_name]) grouped[s.category_name] = [];
+              grouped[s.category_name].push(s);
+            });
+          %>
+          <% Object.entries(grouped).forEach(([cat, catSkills]) => { %>
+            <details class="cat-group">
+              <summary class="cat-group__header">
+                <%= cat %>
+                <span class="cat-group__count"><%= catSkills.filter(s => userSkillIds.includes(s.id)).length %> / <%= catSkills.length %></span>
+              </summary>
+              <div class="cat-group__body">
+                <% catSkills.forEach(skill => { %>
+                  <div class="skill-row">
+                    <label class="skill-row__label">
+                      <input type="checkbox" name="skillIds" value="<%= skill.id %>" class="skill-checkbox" data-skill-id="<%= skill.id %>" <%= userSkillIds.includes(skill.id) ? 'checked' : '' %>>
+                      <span class="skill-row__name"><%= skill.name %></span>
+                      <span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+                    </label>
+                    <select name="proficiency[<%= skill.id %>]" class="proficiency-select form-control" style="max-width:140px" <%= userSkillIds.includes(skill.id) ? '' : 'disabled' %>>
+                      <option value="beginner" <%= (userProficiencyMap[skill.id] === 'beginner') ? 'selected' : '' %>>Beginner</option>
+                      <option value="intermediate" <%= (userProficiencyMap[skill.id] === 'intermediate') ? 'selected' : '' %>>Intermediate</option>
+                      <option value="advanced" <%= (userProficiencyMap[skill.id] === 'advanced') ? 'selected' : '' %>>Advanced</option>
+                    </select>
+                  </div>
+                <% }) %>
+              </div>
+            </details>
+          <% }) %>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full" style="margin-top:var(--sp-4)">Save profile</button>
+      </form>
     </div>
-  </section>
-</main>
 
-<script>
-document.querySelectorAll('.skill-checkbox').forEach(cb => {
-  const select = document.querySelector(`select[name="proficiency[${cb.dataset.skillId}]"]`);
-  cb.addEventListener('change', () => { if (select) select.disabled = !cb.checked; });
-});
-</script>
+    <div class="card">
+      <span class="section-label">Recommended focus</span>
+      <h2 style="font-size:1.25rem;margin-bottom:var(--sp-2)">Your top next courses</h2>
+      <p class="text-muted" style="margin-bottom:var(--sp-6);font-size:0.82rem">Powered by SkillMatch engine</p>
+      <% if (recommendations.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11h20"/><path d="M10 20h15"/><path d="M10 29h12"/><path d="M35 30l7 7"/><circle cx="30" cy="25" r="8"/></svg>
+          </div>
+          <p class="empty-state__title">No recommendations yet</p>
+          <p class="text-muted">Add your known skills on the left to generate a ranked learning plan.</p>
+        </div>
+      <% } else { %>
+        <% recommendations.slice(0, 5).forEach((skill, idx) => { const pct = Math.round(Math.min(skill.score / 130, 1) * 100); %>
+          <article class="rec-item">
+            <div class="rec-item__rank">#<%= idx + 1 %></div>
+            <div class="rec-item__body">
+              <div class="rec-item__meta"><span class="badge badge--category"><%= skill.category_name %></span><span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span></div>
+              <h3 class="rec-item__name"><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h3>
+              <p class="rec-item__reason text-muted"><%= skill.reason %></p>
+              <div class="progress-bar"><div class="progress-bar__fill" style="width:<%= pct %>%"></div></div>
+            </div>
+            <span class="rec-item__score"><%= skill.score %></span>
+          </article>
+        <% }) %>
+        <a href="/recommend" class="rec-more">View all <%= recommendations.length %> recommendations</a>
+      <% } %>
+    </div>
+  </div>
+</main>
 
 <%- include('../partials/footer') %>
