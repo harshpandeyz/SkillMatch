@@ -46,8 +46,8 @@ router.post(
   '/profile',
   requireAuth,
   [
-    body('name').trim().isLength({ min: 2 }).withMessage('Name must be at least 2 characters.'),
-    body('targetRole').optional({ checkFalsy: true }).trim().isLength({ max: 100 }),
+    body('name').trim().escape().isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters.'),
+    body('targetRole').optional({ checkFalsy: true }).trim().escape().isLength({ max: 100 }),
     body('skillIds').optional()
   ],
   async (req, res, next) => {
@@ -64,12 +64,12 @@ router.post(
       const proficiencyMap = req.body.proficiency || {};
 
       await userModel.updateProfile(req.session.user.id, {
-        name: req.body.name.trim(),
+        name: req.body.name,
         targetRole: req.body.targetRole || null
       });
       await userModel.replaceUserSkills(req.session.user.id, skillIds, proficiencyMap);
 
-      req.session.user.name = req.body.name.trim();
+      req.session.user.name = req.body.name;
       req.session.user.target_role = req.body.targetRole || null;
       req.session.flash = { type: 'success', message: 'Profile and skills updated.' };
       res.redirect('/dashboard');
