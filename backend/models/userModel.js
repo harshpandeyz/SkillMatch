@@ -35,11 +35,15 @@ exports.replaceUserSkills = async (userId, skillIds = [], proficiencyMap = {}) =
     await connection.beginTransaction();
     await connection.query('DELETE FROM user_skills WHERE user_id = ?', [userId]);
     const uniqueSkillIds = [...new Set(skillIds.map(Number).filter(Boolean))];
-    for (const skillId of uniqueSkillIds) {
-      const proficiency = proficiencyMap[skillId] || 'beginner';
+    if (uniqueSkillIds.length > 0) {
+      const rows = uniqueSkillIds.map((skillId) => [
+        userId,
+        skillId,
+        proficiencyMap[skillId] || 'beginner'
+      ]);
       await connection.query(
-        'INSERT INTO user_skills (user_id, skill_id, proficiency) VALUES (?, ?, ?)',
-        [userId, skillId, proficiency]
+        'INSERT INTO user_skills (user_id, skill_id, proficiency) VALUES ?',
+        [rows]
       );
     }
     await connection.commit();
