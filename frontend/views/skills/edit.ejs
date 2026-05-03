@@ -1,43 +1,39 @@
-<%- include('../partials/header', { title: 'Edit Skill' }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
-<main class="container narrow">
-  <section class="panel">
-    <h1>Edit Skill</h1>
+<% const isEditing = !!(skill && skill.id); %>
 
+<main class="container container--narrow" style="padding-top:var(--sp-8);padding-bottom:var(--sp-16)">
+  <div class="card">
+    <span class="section-label"><%= isEditing ? 'Edit skill' : 'Add new skill' %></span>
+    <h1 style="font-size:1.4rem;font-weight:800;margin-bottom:var(--sp-6)"><%= isEditing ? 'Update: ' + skill.name : 'Add a new skill' %></h1>
     <% if (errors && errors.length) { %>
-      <div class="alert">
-        <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
-      </div>
+      <div class="alert alert--error" style="margin-bottom:var(--sp-5)"><% errors.forEach(e => { %><p><%= e.msg %></p><% }) %></div>
     <% } %>
-
-    <form method="POST" action="/skills/<%= skill.id %>?_method=PUT" class="form-stack">
-      <label>Name
-        <input name="name" value="<%= skill.name %>" required>
-      </label>
-      <label>Category
-        <select name="categoryId" required>
-          <% categories.forEach(category => { %>
-            <option value="<%= category.id %>" <%= Number(skill.category_id || skill.categoryId) === category.id ? 'selected' : '' %>><%= category.name %></option>
+    <form method="POST" action="<%= isEditing ? '/skills/' + skill.id + '?_method=PUT' : '/skills' %>" class="form-stack">
+      <div class="form-group"><label for="skillName">Skill name</label><input id="skillName" class="form-control" name="name" value="<%= skill ? skill.name : '' %>" required></div>
+      <div class="form-group">
+        <label for="catSelect">Category</label>
+        <select id="catSelect" class="form-control" name="categoryId" required>
+          <option value="">Select category</option>
+          <% categories.forEach(c => { %>
+            <option value="<%= c.id %>" <%= (skill && skill.category_id === c.id) ? 'selected' : '' %>><%= c.name %></option>
           <% }) %>
         </select>
-      </label>
-      <label>Difficulty
-        <select name="difficulty" required>
-          <% ['Beginner', 'Intermediate', 'Advanced'].forEach(level => { %>
-            <option value="<%= level %>" <%= skill.difficulty === level ? 'selected' : '' %>><%= level %></option>
+      </div>
+      <div class="form-group">
+        <label for="diffSelect">Difficulty</label>
+        <select id="diffSelect" class="form-control" name="difficulty" required>
+          <% ['Beginner','Intermediate','Advanced'].forEach(d => { %>
+            <option value="<%= d %>" <%= (skill && skill.difficulty === d) ? 'selected' : '' %>><%= d %></option>
           <% }) %>
         </select>
-      </label>
-      <label>Resource URL
-        <input name="resourceUrl" value="<%= skill.resource_url || skill.resourceUrl || '' %>">
-      </label>
-      <label>Description
-        <textarea name="description" required><%= skill.description %></textarea>
-      </label>
-      <button type="submit">Update skill</button>
+      </div>
+      <div class="form-group"><label for="descArea">Description</label><textarea id="descArea" class="form-control" name="description" rows="4" required><%= skill ? skill.description : '' %></textarea></div>
+      <div class="form-group"><label for="urlInput">Resource URL <span class="text-muted">(optional)</span></label><input id="urlInput" class="form-control" name="resourceUrl" type="url" value="<%= skill ? (skill.resource_url || '') : '' %>"></div>
+      <div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-2)"><button type="submit" class="btn btn--primary"><%= isEditing ? 'Update skill' : 'Create skill' %></button><a href="/skills" class="btn btn--outline">Cancel</a></div>
     </form>
-  </section>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>
