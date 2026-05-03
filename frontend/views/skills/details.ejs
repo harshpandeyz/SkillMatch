@@ -1,22 +1,36 @@
-<%- include('../partials/header', { title: skill.name }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
-<main class="container narrow">
-  <article class="card detail-card">
-    <div class="card-top">
-      <p class="eyebrow"><%= skill.category_name %></p>
-      <span class="badge badge-<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+<main class="container container--narrow" style="padding-top:var(--sp-8);padding-bottom:var(--sp-16)">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a> <span>/</span>
+    <a href="/skills">Skills</a> <span>/</span>
+    <span><%= skill.name %></span>
+  </nav>
+
+  <article class="card" style="margin-top:var(--sp-5)">
+    <div class="skill-detail__top">
+      <span class="badge badge--category"><%= skill.category_name %></span>
+      <span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
     </div>
-    <h1><%= skill.name %></h1>
-    <p><%= skill.description %></p>
-    <div class="course-meta">
-      <span><%= skill.difficulty === 'Advanced' ? 'Advanced track' : skill.difficulty === 'Intermediate' ? 'Core track' : 'Foundation track' %></span>
-      <span><%= skill.category_name %></span>
+    <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin:var(--sp-4) 0 var(--sp-3)"><%= skill.name %></h1>
+    <p style="font-size:1.05rem;color:var(--gray-600);line-height:1.7;max-width:65ch"><%= skill.description %></p>
+    <hr class="divider">
+    <div class="skill-detail__footer">
+      <% if (skill.resource_url) { %>
+        <a href="<%= skill.resource_url %>" target="_blank" rel="noopener" class="btn btn--primary">Study this skill</a>
+      <% } %>
+      <% if (currentUser && currentUser.role === 'admin') { %>
+        <a href="/skills/<%= skill.id %>/edit" class="btn btn--outline">Edit</a>
+        <form method="POST" action="/skills/<%= skill.id %>?_method=DELETE" style="display:inline"><button type="submit" class="btn btn--danger">Delete</button></form>
+      <% } %>
     </div>
-    <% if (skill.resource_url) { %>
-      <a class="primary-action" href="<%= skill.resource_url %>" target="_blank" rel="noreferrer">Open resource</a>
-    <% } %>
+    <div class="skill-detail__meta">
+      <div><span class="section-label">Category</span><span><%= skill.category_name %></span></div>
+      <div><span class="section-label">Difficulty</span><span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span></div>
+    </div>
   </article>
+  <div style="margin-top:var(--sp-5)"><a href="/skills" class="text-muted" style="font-size:0.875rem">Back to catalogue</a></div>
 </main>
 
 <%- include('../partials/footer') %>
