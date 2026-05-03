@@ -47,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'frontend', 'public'), {
 app.use((req, res, next) => {
   const flash = req.session.flash || null;
   delete req.session.flash;
+  res.locals.currentPath = req.path;
   res.locals.currentUser = req.session.user || null;
   res.locals.flash = flash;
   res.locals.title = 'Skill Recommendation System';
