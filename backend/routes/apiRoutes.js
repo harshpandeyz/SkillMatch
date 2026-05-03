@@ -3,6 +3,7 @@ const { body, param, validationResult } = require('express-validator');
 const db = require('../config/db');
 const skillModel = require('../models/skillModel');
 const recModel = require('../models/recommendationModel');
+const userModel = require('../models/userModel');
 const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
 const asyncHandler = require('../utils/asyncHandler');
 
@@ -81,6 +82,15 @@ router.delete('/skills/:id', requireAdmin, idRule, validateApi, asyncHandler(asy
 
 router.get('/recommendations', requireAuth, asyncHandler(async (req, res) => {
   res.json(await recModel.getRecommendations(req.session.user.id));
+}));
+
+router.get('/users/me', requireAuth, asyncHandler(async (req, res) => {
+  const user = await userModel.findUserById(req.session.user.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found.' });
+  }
+  const { password_hash, ...safe } = user;
+  res.json(safe);
 }));
 
 module.exports = router;
