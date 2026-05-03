@@ -1,72 +1,83 @@
-<%- include('partials/header', { title: 'Skill Recommendation System' }) %>
+<%- include('partials/header', { title: 'Home' }) %>
 <%- include('partials/navbar') %>
 
-<main class="hero product-hero">
-  <section class="hero-copy">
-    <p class="eyebrow">Career Intelligence Platform</p>
-    <h1>Build a focused learning plan for your next technical role.</h1>
-    <p>
-      SkillMatch evaluates your current skills, target role, and proficiency levels to
-      recommend the highest-impact courses for your next step.
-    </p>
-    <div class="hero-actions">
-      <a class="primary-action" href="/auth/register">Create profile</a>
-      <a class="secondary-action" href="/auth/login">Sign in</a>
+<main>
+  <section class="hero-section">
+    <div class="hero-text" style="padding-left:var(--sp-6)">
+      <span class="section-label">Skill Recommendation System</span>
+      <h1>Map your skills.<br>Accelerate your career.</h1>
+      <p>SkillMatch analyses your existing skills, weighs them against your target role, and generates a personalised ranked learning plan - not a generic course list.</p>
+      <div class="hero-actions">
+        <a href="/auth/register" class="btn btn--primary">Get started free</a>
+        <a href="/auth/login" class="btn btn--outline">Sign in</a>
+      </div>
+      <div class="hero-trust">
+        <span class="trust-badge">Secure sessions</span>
+        <span class="trust-badge">Role-matched scoring</span>
+        <span class="trust-badge">38 skills, 13 categories</span>
+      </div>
     </div>
-    <div class="hero-stats" aria-label="Project capabilities">
-      <div><strong>38</strong><span>Curated courses</span></div>
-      <div><strong>13</strong><span>Skill domains</span></div>
-      <div><strong>8</strong><span>Ranked suggestions</span></div>
+    <div class="hero-demo-wrap" style="padding-right:var(--sp-6);display:flex;align-items:center;justify-content:center">
+      <div class="hero-demo-card">
+        <p class="hero-demo-card__label">Top recommendation</p>
+        <h3 class="hero-demo-card__title">Node.js</h3>
+        <div class="hero-demo-card__meta">
+          <span class="badge badge--category">Backend Development</span>
+          <span class="badge badge--intermediate">Intermediate</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label">
+            <span style="font-size:.75rem;color:var(--gray-500)">Match score</span>
+            <span style="font-size:.75rem;font-weight:700;color:var(--brand-600)">87%</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fill"></div></div>
+        </div>
+        <p class="hero-demo-card__reason">Builds on your Programming skills and matches your goal: Backend Developer</p>
+        <a href="/auth/register" class="btn btn--primary btn--sm btn--full">View my path</a>
+      </div>
     </div>
   </section>
 
-  <section class="hero-visual product-preview" aria-label="Recommendation preview">
-    <div class="preview-header">
-      <div>
-        <span>Readiness overview</span>
-        <strong>Backend Developer</strong>
-      </div>
-      <span class="status-pill">Live</span>
-    </div>
-    <div class="preview-grid">
-      <article>
-        <span>Known skills</span>
-        <strong>12</strong>
-      </article>
-      <article>
-        <span>Role match</span>
-        <strong>74%</strong>
-      </article>
-    </div>
-    <div class="insight-panel">
-      <div class="insight-row">
-        <span class="insight-dot"></span>
-        <div>
-          <small>Recommended next</small>
-          <strong>Express.js</strong>
+  <section class="how-section">
+    <div class="container">
+      <p class="section-label" style="text-align:center">How it works</p>
+      <h2 class="how-section__title">Three steps to your learning plan</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-card__step">01</div>
+          <div class="how-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M6 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1"/><path d="m8 13 2 2 4-4"/><path d="M8 18h8"/></svg>
+          </div>
+          <h3>Profile your skills</h3>
+          <p>Select from 38 skills across 13 categories. Mark your proficiency: beginner, intermediate, or advanced.</p>
         </div>
-        <span class="score">92</span>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar" style="width: 92%"></div>
+        <div class="how-card">
+          <div class="how-card__step">02</div>
+          <div class="how-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>
+          </div>
+          <h3>Set your target role</h3>
+          <p>Tell the system what you're aiming for - Backend Developer, Full Stack, Data Analyst, or any role you choose.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-card__step">03</div>
+          <div class="how-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c4-1 7-4 8-8l4-4 2-2-2 6c-1 4-4 7-8 8l-6 2z"/><path d="M9 15 5 11"/><path d="M14 10l4 4"/><path d="M6 18l-2 2"/></svg>
+          </div>
+          <h3>Get your ranked plan</h3>
+          <p>Receive up to 8 recommendations scored by category overlap, difficulty progression, and goal alignment.</p>
+        </div>
       </div>
     </div>
-    <div class="recommend-stack">
-      <article>
-        <small>High-impact course</small>
-        <strong>Express.js</strong>
-        <span>Builds on JavaScript and backend goals</span>
-      </article>
-      <article>
-        <small>Security gap</small>
-        <strong>Authentication Security</strong>
-        <span>Improves production readiness</span>
-      </article>
-      <article>
-        <small>Operational skill</small>
-        <strong>Docker Fundamentals</strong>
-        <span>Supports deployment workflow</span>
-      </article>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Ready to map your learning path?</h2>
+        <p>Join now and get a personalised ranked learning plan in under 2 minutes.</p>
+        <a href="/auth/register" class="btn btn--white">Join now - it's free</a>
+      </div>
     </div>
   </section>
 </main>
