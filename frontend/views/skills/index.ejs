@@ -1,104 +1,69 @@
-<%- include('../partials/header', { title: 'Skills' }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navbar') %>
 
-<main class="container">
-  <section class="dashboard-head">
+<main class="container" style="padding-top:var(--sp-8);padding-bottom:var(--sp-16)">
+  <div class="page-header">
     <div>
-      <p class="eyebrow">Course Catalogue</p>
-      <h1>Explore skill courses</h1>
-      <p class="muted">Filter the catalogue by domain, difficulty, and career relevance.</p>
+      <span class="section-label">Catalogue</span>
+      <h1>Skills Catalogue</h1>
+      <p class="text-muted">Browse <%= skills.length %> skills across 13 categories.</p>
     </div>
-  </section>
+    <% if (currentUser && currentUser.role === 'admin') { %>
+      <a href="/skills/new" class="btn btn--primary">Add skill</a>
+    <% } %>
+  </div>
 
-  <% if (currentUser && currentUser.role === 'admin') { %>
-    <section class="panel">
-      <h2>Add skill</h2>
+  <div class="filter-bar">
+    <input type="search" id="skillSearch" class="form-control filter-bar__search" placeholder="Search skills..." autocomplete="off">
+    <select id="catFilter" class="form-control filter-bar__select">
+      <option value="">All categories</option>
+      <% const cats = [...new Set(skills.map(s => s.category_name))].sort(); cats.forEach(c => { %>
+        <option value="<%= c %>"><%= c %></option>
+      <% }) %>
+    </select>
+    <div class="filter-bar__diff" role="group" aria-label="Filter by difficulty">
+      <button class="diff-btn diff-btn--active" data-diff="">All</button>
+      <button class="diff-btn" data-diff="Beginner">Beginner</button>
+      <button class="diff-btn" data-diff="Intermediate">Intermediate</button>
+      <button class="diff-btn" data-diff="Advanced">Advanced</button>
+    </div>
+  </div>
 
-      <% if (errors && errors.length) { %>
-        <div class="alert">
-          <% errors.forEach(error => { %><p><%= error.msg %></p><% }) %>
-        </div>
-      <% } %>
+  <p class="text-muted" id="skillCount" style="margin-bottom:var(--sp-5);font-size:0.875rem"><%= skills.length %> skills shown</p>
 
-      <form method="POST" action="/skills" class="skill-form">
-        <label>Name
-          <input name="name" value="<%= old.name || '' %>" required>
-        </label>
-        <label>Category
-          <select name="categoryId" required>
-            <option value="">Select</option>
-            <% categories.forEach(category => { %>
-              <option value="<%= category.id %>" <%= Number(old.categoryId) === category.id ? 'selected' : '' %>><%= category.name %></option>
-            <% }) %>
-          </select>
-        </label>
-        <label>Difficulty
-          <select name="difficulty" required>
-            <% ['Beginner', 'Intermediate', 'Advanced'].forEach(level => { %>
-              <option value="<%= level %>" <%= old.difficulty === level ? 'selected' : '' %>><%= level %></option>
-            <% }) %>
-          </select>
-        </label>
-        <label class="wide">Resource URL
-          <input name="resourceUrl" value="<%= old.resourceUrl || '' %>" placeholder="https://example.com/course">
-        </label>
-        <label class="wide">Description
-          <textarea name="description" required><%= old.description || '' %></textarea>
-        </label>
-        <button type="submit">Add skill</button>
-      </form>
-    </section>
-  <% } %>
-
-  <section class="course-toolbar panel">
-    <label>Search courses
-      <input id="courseSearch" type="search" placeholder="Search Node.js, security, cloud...">
-    </label>
-    <label>Category
-      <select id="categoryFilter">
-        <option value="">All categories</option>
-        <% categories.forEach(category => { %>
-          <option value="<%= category.id %>"><%= category.name %></option>
-        <% }) %>
-      </select>
-    </label>
-    <label>Difficulty
-      <select id="difficultyFilter">
-        <option value="">All levels</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
-    </label>
-  </section>
-
-  <section class="cards-grid">
+  <div class="grid-auto" id="skillGrid">
     <% skills.forEach(skill => { %>
-      <article class="card course-card" data-name="<%= skill.name.toLowerCase() %>" data-category="<%= skill.category_id %>" data-difficulty="<%= skill.difficulty.toLowerCase() %>">
-        <div class="card-top">
-          <p class="eyebrow"><%= skill.category_name %></p>
-          <span class="badge badge-<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
+      <article class="skill-card card card--hover" data-name="<%= skill.name.toLowerCase() %>" data-category="<%= skill.category_name %>" data-difficulty="<%= skill.difficulty %>">
+        <div class="skill-card__top">
+          <span class="badge badge--category"><%= skill.category_name %></span>
+          <span class="badge badge--<%= skill.difficulty.toLowerCase() %>"><%= skill.difficulty %></span>
         </div>
-        <h2><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h2>
-        <p><%= skill.description %></p>
-        <div class="course-meta">
-          <span><%= skill.difficulty === 'Advanced' ? 'Advanced track' : skill.difficulty === 'Intermediate' ? 'Core track' : 'Foundation track' %></span>
-          <span><%= skill.category_name %></span>
+        <h3 class="skill-card__name"><a href="/skills/<%= skill.id %>"><%= skill.name %></a></h3>
+        <p class="skill-card__desc text-muted"><%= skill.description %></p>
+        <div class="skill-card__footer">
+          <% if (skill.resource_url) { %>
+            <a href="<%= skill.resource_url %>" target="_blank" rel="noopener" class="skill-card__link">Study resource</a>
+          <% } else { %><span></span><% } %>
+          <% if (currentUser && currentUser.role === 'admin') { %>
+            <div class="skill-card__admin">
+              <a href="/skills/<%= skill.id %>/edit" class="btn btn--outline btn--sm">Edit</a>
+              <form method="POST" action="/skills/<%= skill.id %>?_method=DELETE" style="display:inline">
+                <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+              </form>
+            </div>
+          <% } %>
         </div>
-        <% if (skill.resource_url) { %>
-          <a class="course-link" href="<%= skill.resource_url %>" target="_blank" rel="noreferrer">Open resource</a>
-        <% } %>
-        <% if (currentUser && currentUser.role === 'admin') { %>
-          <div class="inline-actions">
-            <a href="/skills/<%= skill.id %>/edit">Edit</a>
-            <form method="POST" action="/skills/<%= skill.id %>?_method=DELETE">
-              <button class="danger" type="submit">Delete</button>
-            </form>
-          </div>
-        <% } %>
       </article>
     <% }) %>
-  </section>
+  </div>
+
+  <div class="empty-state" id="noResults" hidden>
+    <div class="empty-state__icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="12"/><path d="m31 31 9 9"/><path d="M16 21h10"/></svg>
+    </div>
+    <p class="empty-state__title">No skills match your filter</p>
+    <p class="text-muted">Try a different search term or clear the filters.</p>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>
