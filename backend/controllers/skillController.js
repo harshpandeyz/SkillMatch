@@ -37,17 +37,29 @@ exports.show = async (req, res, next) => {
   }
 };
 
+exports.new = async (req, res, next) => {
+  try {
+    const categories = await skillModel.getCategories();
+    res.render('skills/edit', { title: 'Add Skill', skill: null, categories, errors: [] });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.create = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const [skills, categories] = await Promise.all([
-        skillModel.getAllSkills(),
-        skillModel.getCategories()
-      ]);
-      return res.status(422).render('skills/index', {
-        title: 'Skills',
-        skills,
+      const categories = await skillModel.getCategories();
+      return res.status(422).render('skills/edit', {
+        title: 'Add Skill',
+        skill: {
+          name: req.body.name || '',
+          category_id: Number(req.body.categoryId) || '',
+          difficulty: req.body.difficulty || 'Beginner',
+          description: req.body.description || '',
+          resource_url: req.body.resourceUrl || ''
+        },
         categories,
         errors: errors.array(),
         old: req.body
@@ -55,7 +67,7 @@ exports.create = async (req, res, next) => {
     }
 
     await skillModel.createSkill(normalizeSkill(req.body));
-    req.session.flash = { type: 'success', message: 'Skill created.' };
+    req.session.flash = { type: 'success', message: 'Skill created successfully.' };
     res.redirect('/skills');
   } catch (error) {
     next(error);
@@ -89,14 +101,21 @@ exports.update = async (req, res, next) => {
       ]);
       return res.status(422).render('skills/edit', {
         title: 'Edit Skill',
-        skill: { ...skill, ...req.body },
+        skill: {
+          ...skill,
+          name: req.body.name || '',
+          category_id: Number(req.body.categoryId) || '',
+          difficulty: req.body.difficulty || 'Beginner',
+          description: req.body.description || '',
+          resource_url: req.body.resourceUrl || ''
+        },
         categories,
         errors: errors.array()
       });
     }
 
     await skillModel.updateSkill(req.params.id, normalizeSkill(req.body));
-    req.session.flash = { type: 'success', message: 'Skill updated.' };
+    req.session.flash = { type: 'success', message: 'Skill updated successfully.' };
     res.redirect('/skills');
   } catch (error) {
     next(error);
@@ -106,7 +125,7 @@ exports.update = async (req, res, next) => {
 exports.destroy = async (req, res, next) => {
   try {
     await skillModel.deleteSkill(req.params.id);
-    req.session.flash = { type: 'success', message: 'Skill deleted.' };
+    req.session.flash = { type: 'success', message: 'Skill deleted successfully.' };
     res.redirect('/skills');
   } catch (error) {
     next(error);
